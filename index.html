@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Movie Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .phase {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .phase-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .phase-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .phase-duration {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+        
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .choice {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .choice:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .choice.selected {
+            background: rgba(255,255,255,0.25);
+            border-color: #ffd93d;
+            box-shadow: 0 0 20px rgba(255,217,61,0.3);
+        }
+        
+        .choice-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffd93d;
+        }
+        
+        .tasks {
+            list-style: none;
+            margin: 15px 0;
+        }
+        
+        .task {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .task:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .task-checkbox {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .task.completed {
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .tools-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .tool {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .tool:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .milestone {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 AI Interactive Movie Challenge</h1>
+            <p>Create a choose-your-own-adventure movie powered by AI</p>
+        </div>
+
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-title">Phase 1: Foundation & Planning</div>
+                <div class="phase-duration">Week 1-2</div>
+            </div>
+            
+            <p>First, choose your approach based on your current skills and resources:</p>
+            
+            <div class="choices">
+                <div class="choice" onclick="selectChoice(this, 'beginner')">
+                    <div class="choice-title">🎯 Beginner Path</div>
+                    <p>Start with simple tools and basic storytelling. Perfect if you're new to filmmaking or AI.</p>
+                </div>
+                
+                <div class="choice" onclick="selectChoice(this, 'intermediate')">
+                    <div class="choice-title">🚀 Intermediate Path</div>
+                    <p>Use advanced AI tools and semi-professional equipment. Good if you have some experience.</p>
+                </div>
+                
+                <div class="choice" onclick="selectChoice(this, 'advanced')">
+                    <div class="choice-title">⚡ Advanced Path</div>
+                    <p>Custom AI integration and professional workflow. For experienced creators wanting to push limits.</p>
+                </div>
+            </div>
+
+            <div id="beginner-tasks" class="hidden">
+                <h4>🎯 Beginner Tasks:</h4>
+                <ul class="tasks">
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Write a simple 3-choice story outline (hero encounters obstacle, 3 different solutions)</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Create character profiles and basic plot points for each choice branch</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Learn Twine (free interactive story tool) to map your story structure</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Experiment with ChatGPT/Claude for dialogue generation and plot ideas</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="intermediate-tasks" class="hidden">
+                <h4>🚀 Intermediate Tasks:</h4>
+                <ul class="tasks">
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Design a branching narrative with 5-7 decision points and multiple endings</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Create detailed storyboards with AI art generators (Midjourney, DALL-E)</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Research Unity or Unreal Engine for interactive video implementation</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Plan AI-generated music and sound effects for different story branches</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="advanced-tasks" class="hidden">
+                <h4>⚡ Advanced Tasks:</h4>
+                <ul class="tasks">
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Design complex narrative tree with character development and consequences</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Integrate GPT API for real-time dialogue generation based on user choices</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Plan AI-driven character animation and facial expressions</span>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                        <span>Research computer vision for gesture-based user input</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="phase1-progress"></div>
+            </div>
+        </div>
+
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-title">Phase 2: Pre-Production & AI Integration</div>
+                <div class="phase-duration">Week 3-4</div>
+            </div>
+            
+            <div class="tools-section">
+                <h4>🛠️ Recommended AI Tools:</h4>
+                <div class="tool-grid">
+                    <div class="tool">
+                        <strong>Runway ML</strong><br>
+                        <small>AI video generation</small>
+                    </div>
+                    <div class="tool">
+                        <strong>ElevenLabs</strong><br>
+                        <small>AI voice synthesis</small>
+                    </div>
+                    <div class="tool">
+                        <strong>Stable Video</strong><br>
+                        <small>Video-to-video AI</small>
+                    </div>
+                    <div class="tool">
+                        <strong>Suno AI</strong><br>
+                        <small>AI music generation</small>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="tasks">
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Create a detailed shooting script with choice points clearly marked</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Generate AI concept art for all key scenes and characters</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Test AI video generation tools with your story concepts</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Create AI-generated voice samples for main characters</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Plan interactive interface design (buttons, choice menus)</span>
+                </li>
+            </ul>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="phase2-progress"></div>
+            </div>
+        </div>
+
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-title">Phase 3: Production & Content Creation</div>
+                <div class="phase-duration">Week 5-7</div>
+            </div>
+
+            <ul class="tasks">
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Film/create base footage for your main story scenes</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Generate alternative scenes for each choice branch using AI</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Create seamless transitions between choice points</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Develop AI-generated background music that adapts to choices</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Build interactive choice interface (web-based or app)</span>
+                </li>
+            </ul>
+
+            <div class="milestone">
+                🎯 Milestone: Complete one full story branch from start to finish!
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="phase3-progress"></div>
+            </div>
+        </div>
+
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-title">Phase 4: Assembly & Testing</div>
+                <div class="phase-duration">Week 8</div>
+            </div>
+
+            <ul class="tasks">
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Integrate all video content with choice system</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Test all story paths for continuity and technical issues</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Get feedback from test viewers on different story branches</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Optimize loading times and user experience</span>
+                </li>
+                <li class="task">
+                    <input type="checkbox" class="task-checkbox" onchange="updateProgress()">
+                    <span>Create final version ready for sharing/publication</span>
+                </li>
+            </ul>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="phase4-progress"></div>
+            </div>
+        </div>
+
+        <div class="milestone">
+            🏆 Final Challenge: Create a 5-minute interactive movie where viewers make at least 3 meaningful choices that lead to different outcomes!
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" onclick="resetProgress()">Reset Progress</button>
+            <button class="btn" onclick="showTips()">Get Tips</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedPath = null;
+
+        function selectChoice(element, path) {
+            // Remove previous selection
+            document.querySelectorAll('.choice').forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            
+            // Hide all task sets
+            document.querySelectorAll('[id$="-tasks"]').forEach(tasks => {
+                tasks.classList.add('hidden');
+            });
+            
+            // Show selected choice and tasks
+            element.classList.add('selected');
+            document.getElementById(path + '-tasks').classList.remove('hidden');
+            selectedPath = path;
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const phases = ['phase1', 'phase2', 'phase3', 'phase4'];
+            
+            phases.forEach(phase => {
+                const checkboxes = document.querySelectorAll(`#${phase} .task-checkbox`);
+                const checked = document.querySelectorAll(`#${phase} .task-checkbox:checked`);
+                const progressBar = document.getElementById(`${phase}-progress`);
+                
+                if (checkboxes.length > 0) {
+                    const percentage = (checked.length / checkboxes.length) * 100;
+                    if (progressBar) {
+                        progressBar.style.width = percentage + '%';
+                    }
+                }
+                
+                // Update task appearance
+                checkboxes.forEach((checkbox, index) => {
+                    const taskElement = checkbox.closest('.task');
+                    if (checkbox.checked) {
+                        taskElement.classList.add('completed');
+                    } else {
+                        taskElement.classList.remove('completed');
+                    }
+                });
+            });
+        }
+
+        function resetProgress() {
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.querySelectorAll('.choice').forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            document.querySelectorAll('[id$="-tasks"]').forEach(tasks => {
+                tasks.classList.add('hidden');
+            });
+            updateProgress();
+            selectedPath = null;
+        }
+
+        function showTips() {
+            const tips = [
+                "Start small - even a 2-minute short with 2 choices is impressive!",
+                "Use free AI tools first before investing in premium ones",
+                "Test your story logic with friends before filming",
+                "Consider mobile-first design for your interactive interface",
+                "Document your process - this could be your next project!"
+            ];
+            
+            alert("💡 Tips for Success:\n\n" + tips.join("\n\n"));
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
